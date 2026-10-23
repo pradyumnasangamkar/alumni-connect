@@ -1,0 +1,46 @@
+server:
+  port: 8080
+  servlet:
+    context-path: /api/v1
+
+spring:
+  application:
+    name: alumni-connect-backend
+
+  datasource:
+    url: jdbc:mysql://localhost:3306/alumni_connect_db?createDatabaseIfNotExist=true&useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+    username: root
+    password: root
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    hikari:
+      maximum-pool-size: 10
+      minimum-idle: 2
+      idle-timeout: 30000
+      max-lifetime: 1800000
+      connection-timeout: 20000
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.MySQLDialect
+
+# Custom Application Security & JWT Configuration
+app:
+  jwt:
+    # 256-bit cryptographic secret key for HMAC-SHA256 signing
+    secret: 404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970
+    expiration-ms: 86400000 # 24 hours in milliseconds
+    cookie-name: alumni_jwt_token
+  cors:
+    allowed-origins:
+      - "http://localhost:5173"
+      - "http://127.0.0.1:5173"
+      - "http://localhost:3000"
+  ai:
+    gemini:
+      api-key: ${GEMINI_API_KEY:demo_key}
+      model: gemini-1.5-flash

@@ -1,0 +1,51 @@
+@import "tailwindcss";
+
+@theme {
+  --color-obsidian-bg: #0B1020;
+  --color-obsidian-surface: #10172A;
+  --color-obsidian-card: #151E33;
+  --color-obsidian-hover: #1C2742;
+  --color-obsidian-border: #26334B;
+  --color-obsidian-border-focus: #8B7CFF;
+  
+  --color-accent-iris: #8B7CFF;
+  --color-accent-iris-hover: #7A69FA;
+  --color-accent-cyan: #55D6E8;
+  
+  --color-text-main: #F3F5FC;
+  --color-text-body: #A7B2C8;
+  --color-text-muted: #7F8BA3;
+  
+  --color-status-success: #43D9A3;
+  --color-status-warning: #F5C76A;
+  --color-status-error: #FF7185;
+}
+
+:root {
+  color-scheme: dark;
+}
+
+body {
+  margin: 0;
+  background-color: #0B1020;
+  color: #F3F5FC;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Custom scrollbars for dark UI */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #0B1020;
+}
+::-webkit-scrollbar-thumb {
+  background: #26334B;
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #3B4D6E;
+}
