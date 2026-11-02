@@ -46,17 +46,33 @@ export const RegisterPage = ({ onRegister }) => {
     // Simulate backend Spring Boot registration latency
     setTimeout(() => {
       setIsLoading(false);
-      onRegister({
+      const newUser = {
         id: Date.now(),
-        fullName,
-        email,
+        fullName: fullName.trim(),
+        email: email.trim(),
         role,
+        password,
         avatarUrl: role === 'ALUMNI' 
           ? "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=250"
           : "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=250",
-      });
+        headline: role === 'ALUMNI' ? 'Alumni Member' : "Computer Science Undergrad '26",
+        skills: ['Java', 'Spring Boot', 'React', 'MySQL', 'Tailwind CSS'],
+        department: 'Computer Science and Engineering',
+        graduationYear: role === 'ALUMNI' ? 2023 : 2026,
+        location: 'Bengaluru, India',
+        profileCompletion: 80,
+        bio: `Hello! I am ${fullName.trim()}, passionate about software engineering and building full-stack applications.`,
+      };
+
+      try {
+        const stored = JSON.parse(localStorage.getItem('alumni_registered_users') || '[]');
+        const updated = [newUser, ...stored.filter(u => u.email.toLowerCase() !== newUser.email.toLowerCase())];
+        localStorage.setItem('alumni_registered_users', JSON.stringify(updated));
+      } catch (e) {}
+
+      onRegister(newUser);
       navigate('/dashboard');
-    }, 700);
+    }, 600);
   };
 
   return (

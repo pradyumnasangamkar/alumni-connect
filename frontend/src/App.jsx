@@ -39,7 +39,14 @@ import {
 } from './data/mockData';
 
 export function App() {
-  const [currentUser, setCurrentUser] = useState(currentUserMock);
+  const [currentUser, setCurrentUser] = useState(() => {
+    try {
+      const saved = localStorage.getItem('alumni_active_user');
+      return saved ? JSON.parse(saved) : null;
+    } catch (e) {
+      return null;
+    }
+  });
   const [alumniList, setAlumniList] = useState(alumniProfilesMock);
   const [jobsList, setJobsList] = useState(jobsMock);
   const [eventsList, setEventsList] = useState(eventsMock);
@@ -99,6 +106,10 @@ export function App() {
 
   // Connection Handlers
   const handleConnectProfile = async (profile) => {
+    if (!currentUser) {
+      showToast('Please log in or create an account to connect with alumni.', 'info');
+      return;
+    }
     try {
       if (profile.userId) {
         await connectionApi.send(profile.userId, 'Hi, I would love to connect!').catch(() => null);
@@ -155,6 +166,10 @@ export function App() {
 
   // RSVP Handler
   const handleToggleRsvp = async (eventId) => {
+    if (!currentUser) {
+      showToast('Please log in or create an account to RSVP for events.', 'info');
+      return;
+    }
     try {
       const updated = await eventApi.toggleRsvp(eventId).catch(() => null);
       if (updated) {
@@ -226,12 +241,18 @@ export function App() {
   // Auth Handlers
   const handleLogin = (user) => {
     setCurrentUser(user);
+    try {
+      localStorage.setItem('alumni_active_user', JSON.stringify(user));
+    } catch (e) {}
     showToast(`Welcome back, ${user.fullName}!`, 'success');
   };
 
   const handleRegister = (user) => {
     setCurrentUser(user);
-    showToast(`Account created successfully! Welcome to Alumni Connect.`, 'success');
+    try {
+      localStorage.setItem('alumni_active_user', JSON.stringify(user));
+    } catch (e) {}
+    showToast(`Account created successfully! Welcome, ${user.fullName}.`, 'success');
   };
 
   const handleLogout = async () => {
@@ -240,6 +261,10 @@ export function App() {
     } catch (e) {
       // ignore
     }
+    try {
+      localStorage.removeItem('alumni_active_user');
+      localStorage.removeItem('token');
+    } catch (e) {}
     setCurrentUser(null);
     showToast('Signed out successfully.', 'info');
   };

@@ -28,29 +28,63 @@ export const LoginPage = ({ onLogin }) => {
     setTimeout(() => {
       setIsLoading(false);
 
-      // Determine role based on email or test credentials
+      // 1. Check if user registered in local session
+      let registeredUsers = [];
+      try {
+        registeredUsers = JSON.parse(localStorage.getItem('alumni_registered_users') || '[]');
+      } catch (e) {}
+
+      const foundUser = registeredUsers.find(
+        (u) => u.email.toLowerCase() === email.trim().toLowerCase()
+      );
+
+      if (foundUser) {
+        if (foundUser.password && foundUser.password !== password) {
+          setErrorMessage('Invalid password. Please check your credentials.');
+          return;
+        }
+        onLogin(foundUser);
+        navigate('/dashboard');
+        return;
+      }
+
+      // 2. Demo logins & smart fallback
       let role = 'STUDENT';
-      let fullName = 'Sangamesh Patil';
+      let cleanName = email.split('@')[0].replace(/[^a-zA-Z]/g, ' ').trim();
+      let fullName = cleanName
+        ? cleanName.split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ')
+        : 'Member';
+
       if (email.includes('admin')) {
         role = 'ADMIN';
         fullName = 'System Administrator';
       } else if (email.includes('alumni') || email.includes('google')) {
         role = 'ALUMNI';
         fullName = 'Priya Sharma';
+      } else if (email === 'student@university.edu') {
+        role = 'STUDENT';
+        fullName = 'Student Member';
       }
 
       onLogin({
-        id: 1,
+        id: Date.now(),
         fullName,
-        email,
+        email: email.trim(),
         role,
         avatarUrl: role === 'ALUMNI' 
           ? "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=250"
           : "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=250",
+        headline: role === 'ALUMNI' ? 'Senior Software Engineer' : 'Computer Science Scholar',
+        skills: ['Java', 'Spring Boot', 'React', 'MySQL', 'Tailwind CSS'],
+        department: 'Computer Science and Engineering',
+        graduationYear: role === 'ALUMNI' ? 2022 : 2026,
+        location: 'Bengaluru, India',
+        profileCompletion: 85,
+        bio: 'Passionate engineer connecting with alumni and building full-stack applications.',
       });
 
       navigate('/dashboard');
-    }, 700);
+    }, 600);
   };
 
   const handleDemoFill = (roleType) => {
